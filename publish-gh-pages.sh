@@ -22,4 +22,4 @@ echo "Generating site"
 ./build.sh
 
 echo "Updating gh-pages branch"
-cd public && git add --all && git commit -m "Publishing to gh-pages (publish-gh-pages.sh)" && git push --force && cd ..
+cd public && git add --all && git commit -m "Publishing to gh-pages (publish-gh-pages.sh)" && git push --force origin gh-pages
