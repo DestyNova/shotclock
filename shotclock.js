@@ -8263,10 +8263,19 @@ var _elm_lang$html$Html_Events$Options = F2(
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text('NOTHING IS POTATO'),
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'color', _1: 'red'},
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text('NATHING IS POTATO'),
 			_1: {ctor: '[]'}
 		});
 };
