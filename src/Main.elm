@@ -25,7 +25,8 @@ init : ( Model, Cmd Msg )
 init =
     { gameTime = 0
     , turnTime = 0
-    } ! []
+    }
+        ! []
 
 
 
@@ -36,6 +37,7 @@ type Msg
     = NoOp
 
 
+
 -- UPDATE
 
 
@@ -44,6 +46,7 @@ update msg model =
     case msg of
         NoOp ->
             model ! []
+
 
 
 -- SUBSCRIPTIONS
@@ -60,4 +63,6 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div [] [ text "NOTHING IS POTATO" ]
+    div
+        [ style [ ( "color", "red" ) ] ]
+        [ text "NATHING IS POTATO" ]
