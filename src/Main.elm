@@ -9,6 +9,7 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
+import Task
 
 
 main : Program Never Model Msg
@@ -55,6 +56,8 @@ type Msg
     = Tick Time
     | StartGame
     | EndGame
+    | StartShot
+    | EndShot
 
 
 
@@ -112,7 +115,20 @@ update msg model =
                 { newModel | mode = Playing } ! []
 
         EndGame ->
-                { model | mode = Stopped } ! []
+            { model | mode = Stopped } ! []
+
+        StartShot ->
+            let
+                turnTime =
+                    if model.gameTime < 5 * 60 * 10 then
+                        100
+                    else
+                        150
+            in
+                { model | turnTime = turnTime, mode = Playing } ! []
+
+        EndShot ->
+            { model | mode = Busy } ! []
 
 
 getCountdownAudio : Int -> List String
@@ -173,11 +189,11 @@ view model =
                         [ Block.custom <|
                             Grid.row []
                                 [ Grid.col []
-                                    [ Button.button [ Button.success, Button.block, Button.disabled (model.mode /= Busy) ]
+                                    [ Button.button [ Button.success, Button.block, Button.disabled (model.mode /= Busy), Button.onClick StartShot ]
                                         [ text "Start shot" ]
                                     ]
                                 , Grid.col []
-                                    [ Button.button [ Button.danger, Button.block, Button.disabled (model.mode /= Playing) ]
+                                    [ Button.button [ Button.danger, Button.block, Button.disabled (model.mode /= Playing), Button.onClick EndShot ]
                                         [ text "Finish shot" ]
                                     ]
                                 ]
