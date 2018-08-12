@@ -4,6 +4,11 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Time exposing (Time, second)
+import Bootstrap.Grid as Grid
+import Bootstrap.Grid.Col as Col
+import Bootstrap.Card as Card
+import Bootstrap.Card.Block as Block
+import Bootstrap.Button as Button
 
 
 main : Program Never Model Msg
@@ -19,17 +24,27 @@ main =
 type alias Model =
     { gameTime : Int
     , turnTime : Int
-    , playing : Bool
+    , mode : GameMode
     }
+
+
+type GameMode
+    = Stopped
+    | Playing
+    | Busy
 
 
 init : ( Model, Cmd Msg )
 init =
+    initModel ! []
+
+
+initModel : Model
+initModel =
     { gameTime = 6000
     , turnTime = 150
-    , playing = True
+    , mode = Stopped
     }
-        ! []
 
 
 
@@ -38,6 +53,7 @@ init =
 
 type Msg
     = Tick Time
+    | StartGame
 
 
 
@@ -55,16 +71,72 @@ update msg model =
                 gameTime =
                     model.gameTime - 1
 
-                playing =
-                    model.playing && turnTime > 0
+                audioEvents =
+                    if gameTime <= 0 && model.mode /= Stopped then
+                        [ "game-over-bell" ]
+                    else if model.mode == Playing then
+                        getCountdownAudio turnTime
+                    else
+                        []
+
+                commands =
+                    List.map (\e -> Cmd.none) audioEvents
+
+                mode =
+                    if gameTime <= 0 then
+                        Stopped
+                    else if turnTime > 0 then
+                        model.mode
+                    else
+                        Busy
 
                 newModel =
-                    if model.playing then
-                        { model | gameTime = gameTime, turnTime = turnTime, playing = playing }
-                    else
-                        model
+                    case model.mode of
+                        Stopped ->
+                            model
+
+                        Busy ->
+                            { model | gameTime = gameTime, mode = mode }
+
+                        Playing ->
+                            { model | gameTime = gameTime, turnTime = turnTime, mode = mode }
             in
-                newModel ! []
+                newModel ! commands
+
+        StartGame ->
+            let
+                newModel =
+                    initModel
+            in
+                { newModel | mode = Playing } ! []
+
+
+getCountdownAudio : Int -> List String
+getCountdownAudio n =
+    if n % 10 > 0 then
+        []
+    else
+        case n of
+            5 ->
+                [ "5" ]
+
+            4 ->
+                [ "4" ]
+
+            3 ->
+                [ "3" ]
+
+            2 ->
+                [ "2" ]
+
+            1 ->
+                [ "1" ]
+
+            0 ->
+                [ "buzzer" ]
+
+            _ ->
+                []
 
 
 
@@ -73,7 +145,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    if model.playing then
+    if model.mode /= Stopped then
         Time.every (0.1 * second) Tick
     else
         Sub.none
@@ -85,13 +157,54 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    showCounter model
+    Grid.container []
+        [ Grid.row []
+            [ Grid.col []
+                [ Card.config [ Card.outlinePrimary ]
+                    |> Card.headerH4 [] [ text "Snooker Shootout Timer" ]
+                    |> Card.block []
+                        [ Block.custom <| showCounter model
+                        ]
+                    |> Card.block []
+                        [ Block.custom <|
+                            Grid.row []
+                                [ Grid.col []
+                                    [ Button.button [ Button.success, Button.block, Button.disabled (model.mode /= Busy) ]
+                                        [ text "Start shot" ]
+                                    ]
+                                , Grid.col []
+                                    [ Button.button [ Button.warning, Button.block, Button.disabled (model.mode /= Playing) ]
+                                        [ text "Finish shot" ]
+                                    ]
+                                ]
+                        ]
+                    |> Card.block []
+                        [ Block.custom <|
+                            showGameStartButton model.mode
+                        ]
+                    |> Card.view
+                ]
+            ]
+        ]
+
+
+showGameStartButton : GameMode -> Html Msg
+showGameStartButton mode =
+    case mode of
+        Stopped ->
+            Button.button
+                [ Button.outlinePrimary, Button.block, Button.onClick StartGame ]
+                [ text "Start game" ]
+
+        _ ->
+            Button.button
+                [ Button.outlineDanger, Button.block, Button.onClick StartGame ]
+                [ text "Start game" ]
 
 
 showCounter : Model -> Html Msg
 showCounter model =
-    div
-        []
+    div []
         [ showGameTimer model, showShotTimer model ]
 
 
@@ -107,9 +220,11 @@ showGameTimer model =
             else
                 "green"
     in
-        div
-            [ style [ ( "color", c ) ] ]
-            [ text <| formatGameTime n ]
+        div []
+            [ text "GAME TIME: "
+            , span [ style [ ( "color", c ) ] ]
+                [ text <| formatGameTime n ]
+            ]
 
 
 showShotTimer : Model -> Html Msg
@@ -124,14 +239,17 @@ showShotTimer model =
             else
                 "green"
     in
-        div
-            [ style [ ( "color", c ) ] ]
-            [ text <| formatShotTime n ]
+        div []
+            [ text "SHOT TIME: "
+            , span [ style [ ( "color", c ) ] ]
+                [ text <| formatShotTime n ]
+            ]
 
 
 formatGameTime : Int -> String
 formatGameTime n =
     (n // 600 |> toString) ++ ":" ++ String.padLeft 2 '0' (n % 600 // 10 |> toString)
+
 
 formatShotTime : Int -> String
 formatShotTime n =
