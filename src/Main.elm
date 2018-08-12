@@ -54,6 +54,7 @@ initModel =
 type Msg
     = Tick Time
     | StartGame
+    | EndGame
 
 
 
@@ -109,6 +110,9 @@ update msg model =
                     initModel
             in
                 { newModel | mode = Playing } ! []
+
+        EndGame ->
+                { model | mode = Stopped } ! []
 
 
 getCountdownAudio : Int -> List String
@@ -173,7 +177,7 @@ view model =
                                         [ text "Start shot" ]
                                     ]
                                 , Grid.col []
-                                    [ Button.button [ Button.warning, Button.block, Button.disabled (model.mode /= Playing) ]
+                                    [ Button.button [ Button.danger, Button.block, Button.disabled (model.mode /= Playing) ]
                                         [ text "Finish shot" ]
                                     ]
                                 ]
@@ -193,13 +197,13 @@ showGameStartButton mode =
     case mode of
         Stopped ->
             Button.button
-                [ Button.outlinePrimary, Button.block, Button.onClick StartGame ]
+                [ Button.outlinePrimary, Button.small, Button.block, Button.onClick StartGame ]
                 [ text "Start game" ]
 
         _ ->
             Button.button
-                [ Button.outlineDanger, Button.block, Button.onClick StartGame ]
-                [ text "Start game" ]
+                [ Button.outlineDanger, Button.small, Button.block, Button.onClick EndGame ]
+                [ text "End game" ]
 
 
 showCounter : Model -> Html Msg
