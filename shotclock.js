@@ -12022,15 +12022,32 @@ var _user$project$Main$update = F2(
 						newModel,
 						{mode: _user$project$Main$Playing}),
 					{ctor: '[]'});
-			default:
+			case 'EndGame':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
 						{mode: _user$project$Main$Stopped}),
 					{ctor: '[]'});
+			case 'StartShot':
+				var turnTime = (_elm_lang$core$Native_Utils.cmp(model.gameTime, (5 * 60) * 10) < 0) ? 100 : 150;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{turnTime: turnTime, mode: _user$project$Main$Playing}),
+					{ctor: '[]'});
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{mode: _user$project$Main$Busy}),
+					{ctor: '[]'});
 		}
 	});
+var _user$project$Main$EndShot = {ctor: 'EndShot'};
+var _user$project$Main$StartShot = {ctor: 'StartShot'};
 var _user$project$Main$EndGame = {ctor: 'EndGame'};
 var _user$project$Main$StartGame = {ctor: 'StartGame'};
 var _user$project$Main$showGameStartButton = function (mode) {
@@ -12141,7 +12158,11 @@ var _user$project$Main$view = function (model) {
 																				ctor: '::',
 																				_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
 																					!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Busy)),
-																				_1: {ctor: '[]'}
+																				_1: {
+																					ctor: '::',
+																					_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$StartShot),
+																					_1: {ctor: '[]'}
+																				}
 																			}
 																		}
 																	},
@@ -12171,7 +12192,11 @@ var _user$project$Main$view = function (model) {
 																					ctor: '::',
 																					_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
 																						!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Playing)),
-																					_1: {ctor: '[]'}
+																					_1: {
+																						ctor: '::',
+																						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$EndShot),
+																						_1: {ctor: '[]'}
+																					}
 																				}
 																			}
 																		},
