@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -10,6 +10,7 @@ import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
 import Task
+import Dict
 
 
 main : Program Never Model Msg
@@ -48,6 +49,19 @@ initModel =
     }
 
 
+audioClips =
+    [ "buzzer.ogg"
+    , "shotclock-10s.ogg"
+    , "shotclock-15s.ogg"
+    , "game-over.ogg"
+    , "5.ogg"
+    , "4.ogg"
+    , "3.ogg"
+    , "2.ogg"
+    , "1.ogg"
+    ]
+
+
 
 -- MESSAGES
 
@@ -77,14 +91,14 @@ update msg model =
 
                 audioEvents =
                     if gameTime <= 0 && model.mode /= Stopped then
-                        [ "game-over-bell" ]
+                        [ "game-over" ]
                     else if model.mode == Playing then
                         getCountdownAudio turnTime
                     else
                         []
 
                 commands =
-                    List.map (\e -> Cmd.none) audioEvents
+                    List.map (\e -> playAudio (e ++ ".ogg")) audioEvents
 
                 mode =
                     if gameTime <= 0 then
@@ -112,7 +126,7 @@ update msg model =
                 newModel =
                     initModel
             in
-                { newModel | mode = Playing } ! []
+                { newModel | mode = Playing } ! [ playAudio "shotclock-15s.ogg" ]
 
         EndGame ->
             { model | mode = Stopped } ! []
@@ -136,7 +150,7 @@ getCountdownAudio n =
     if n % 10 > 0 then
         []
     else
-        case n of
+        case n // 10 of
             5 ->
                 [ "5" ]
 
@@ -159,6 +173,9 @@ getCountdownAudio n =
                 []
 
 
+-- PORTS
+
+port playAudio : String -> Cmd msg
 
 -- SUBSCRIPTIONS
 
@@ -177,35 +194,43 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    Grid.container []
-        [ Grid.row []
-            [ Grid.col []
-                [ Card.config [ Card.outlinePrimary ]
-                    |> Card.headerH4 [] [ text "Snooker Shootout Timer" ]
-                    |> Card.block []
-                        [ Block.custom <| showCounter model
-                        ]
-                    |> Card.block []
-                        [ Block.custom <|
-                            Grid.row []
-                                [ Grid.col []
-                                    [ Button.button [ Button.success, Button.block, Button.disabled (model.mode /= Busy), Button.onClick StartShot ]
-                                        [ text "Start shot" ]
+    div []
+        [ Grid.container []
+            [ Grid.row []
+                [ Grid.col []
+                    [ Card.config [ Card.outlinePrimary ]
+                        |> Card.headerH4 [] [ text "Snooker Shootout Timer" ]
+                        |> Card.block []
+                            [ Block.custom <| showCounter model
+                            ]
+                        |> Card.block []
+                            [ Block.custom <|
+                                Grid.row []
+                                    [ Grid.col []
+                                        [ Button.button [ Button.success, Button.block, Button.disabled (model.mode /= Busy), Button.onClick StartShot ]
+                                            [ text "Start shot" ]
+                                        ]
+                                    , Grid.col []
+                                        [ Button.button [ Button.danger, Button.block, Button.disabled (model.mode /= Playing), Button.onClick EndShot ]
+                                            [ text "Finish shot" ]
+                                        ]
                                     ]
-                                , Grid.col []
-                                    [ Button.button [ Button.danger, Button.block, Button.disabled (model.mode /= Playing), Button.onClick EndShot ]
-                                        [ text "Finish shot" ]
-                                    ]
-                                ]
-                        ]
-                    |> Card.block []
-                        [ Block.custom <|
-                            showGameStartButton model.mode
-                        ]
-                    |> Card.view
+                            ]
+                        |> Card.block []
+                            [ Block.custom <|
+                                showGameStartButton model.mode
+                            ]
+                        |> Card.view
+                    ]
                 ]
             ]
+        , makeAudioObjects
         ]
+
+
+makeAudioObjects =
+    div [] <|
+        List.map (\url -> audio [id url] [ source [ src url ] [] ]) audioClips
 
 
 showGameStartButton : GameMode -> Html Msg
