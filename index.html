@@ -11,6 +11,12 @@
   </head>
   <body style="background: url('background.jpg') no-repeat center center fixed; background-size: cover">
     <script type="text/javascript" src="shotclock.min.js"></script>
-    <script type="text/javascript">Elm.Main.fullscreen()</script>
+    <script type="text/javascript">
+      var app = Elm.Main.fullscreen();
+
+      app.ports.playAudio.subscribe(function(audioId) {
+        document.getElementById(audioId).play();
+      });
+    </script>
   </body>
 </html>

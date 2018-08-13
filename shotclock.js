@@ -11924,7 +11924,7 @@ var _user$project$Main$getCountdownAudio = function (n) {
 		0) > 0) {
 		return {ctor: '[]'};
 	} else {
-		var _p0 = n;
+		var _p0 = (n / 10) | 0;
 		switch (_p0) {
 			case 5:
 				return {
@@ -11967,14 +11967,83 @@ var _user$project$Main$getCountdownAudio = function (n) {
 		}
 	}
 };
-var _user$project$Main$Model = F3(
-	function (a, b, c) {
-		return {gameTime: a, turnTime: b, mode: c};
+var _user$project$Main$audioClips = {
+	ctor: '::',
+	_0: 'buzzer.ogg',
+	_1: {
+		ctor: '::',
+		_0: 'shotclock-10s.ogg',
+		_1: {
+			ctor: '::',
+			_0: 'shotclock-15s.ogg',
+			_1: {
+				ctor: '::',
+				_0: 'game-over.ogg',
+				_1: {
+					ctor: '::',
+					_0: '5.ogg',
+					_1: {
+						ctor: '::',
+						_0: '4.ogg',
+						_1: {
+							ctor: '::',
+							_0: '3.ogg',
+							_1: {
+								ctor: '::',
+								_0: '2.ogg',
+								_1: {
+									ctor: '::',
+									_0: '1.ogg',
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Main$makeAudioObjects = A2(
+	_elm_lang$html$Html$div,
+	{ctor: '[]'},
+	A2(
+		_elm_lang$core$List$map,
+		function (url) {
+			return A2(
+				_elm_lang$html$Html$audio,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$id(url),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$source,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$src(url),
+							_1: {ctor: '[]'}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				});
+		},
+		_user$project$Main$audioClips));
+var _user$project$Main$playAudio = _elm_lang$core$Native_Platform.outgoingPort(
+	'playAudio',
+	function (v) {
+		return v;
+	});
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {gameTime: a, turnTime: b, mode: c, warnedAboutFastMode: d};
 	});
 var _user$project$Main$Busy = {ctor: 'Busy'};
 var _user$project$Main$Playing = {ctor: 'Playing'};
 var _user$project$Main$Stopped = {ctor: 'Stopped'};
-var _user$project$Main$initModel = {gameTime: 6000, turnTime: 150, mode: _user$project$Main$Stopped};
+var _user$project$Main$initModel = {gameTime: 6000, turnTime: 150, mode: _user$project$Main$Stopped, warnedAboutFastMode: false};
 var _user$project$Main$init = A2(
 	_elm_lang$core$Platform_Cmd_ops['!'],
 	_user$project$Main$initModel,
@@ -11988,13 +12057,14 @@ var _user$project$Main$update = F2(
 				var turnTime = model.turnTime - 1;
 				var audioEvents = ((_elm_lang$core$Native_Utils.cmp(gameTime, 0) < 1) && (!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Stopped))) ? {
 					ctor: '::',
-					_0: 'game-over-bell',
+					_0: 'game-over',
 					_1: {ctor: '[]'}
 				} : (_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Playing) ? _user$project$Main$getCountdownAudio(turnTime) : {ctor: '[]'});
 				var commands = A2(
 					_elm_lang$core$List$map,
 					function (e) {
-						return _elm_lang$core$Platform_Cmd$none;
+						return _user$project$Main$playAudio(
+							A2(_elm_lang$core$Basics_ops['++'], e, '.ogg'));
 					},
 					audioEvents);
 				var mode = (_elm_lang$core$Native_Utils.cmp(gameTime, 0) < 1) ? _user$project$Main$Stopped : ((_elm_lang$core$Native_Utils.cmp(turnTime, 0) > 0) ? model.mode : _user$project$Main$Busy);
@@ -12021,7 +12091,11 @@ var _user$project$Main$update = F2(
 					_elm_lang$core$Native_Utils.update(
 						newModel,
 						{mode: _user$project$Main$Playing}),
-					{ctor: '[]'});
+					{
+						ctor: '::',
+						_0: _user$project$Main$playAudio('shotclock-15s.ogg'),
+						_1: {ctor: '[]'}
+					});
 			case 'EndGame':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -12031,12 +12105,27 @@ var _user$project$Main$update = F2(
 					{ctor: '[]'});
 			case 'StartShot':
 				var turnTime = (_elm_lang$core$Native_Utils.cmp(model.gameTime, (5 * 60) * 10) < 0) ? 100 : 150;
+				var _p3 = ((!model.warnedAboutFastMode) && _elm_lang$core$Native_Utils.eq(turnTime, 100)) ? {
+					ctor: '_Tuple2',
+					_0: true,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Main$playAudio('shotclock-10s.ogg'),
+						_1: {ctor: '[]'}
+					}
+				} : {
+					ctor: '_Tuple2',
+					_0: model.warnedAboutFastMode,
+					_1: {ctor: '[]'}
+				};
+				var warnedAboutFastMode = _p3._0;
+				var audioCommands = _p3._1;
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{turnTime: turnTime, mode: _user$project$Main$Playing}),
-					{ctor: '[]'});
+						{turnTime: turnTime, mode: _user$project$Main$Playing, warnedAboutFastMode: warnedAboutFastMode}),
+					audioCommands);
 			default:
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
@@ -12051,8 +12140,8 @@ var _user$project$Main$StartShot = {ctor: 'StartShot'};
 var _user$project$Main$EndGame = {ctor: 'EndGame'};
 var _user$project$Main$StartGame = {ctor: 'StartGame'};
 var _user$project$Main$showGameStartButton = function (mode) {
-	var _p3 = mode;
-	if (_p3.ctor === 'Stopped') {
+	var _p4 = mode;
+	if (_p4.ctor === 'Stopped') {
 		return A2(
 			_rundis$elm_bootstrap$Bootstrap_Button$button,
 			{
@@ -12106,140 +12195,151 @@ var _user$project$Main$showGameStartButton = function (mode) {
 };
 var _user$project$Main$view = function (model) {
 	return A2(
-		_rundis$elm_bootstrap$Bootstrap_Grid$container,
+		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
-				_rundis$elm_bootstrap$Bootstrap_Grid$row,
+				_rundis$elm_bootstrap$Bootstrap_Grid$container,
 				{ctor: '[]'},
 				{
 					ctor: '::',
 					_0: A2(
-						_rundis$elm_bootstrap$Bootstrap_Grid$col,
+						_rundis$elm_bootstrap$Bootstrap_Grid$row,
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _rundis$elm_bootstrap$Bootstrap_Card$view(
-								A3(
-									_rundis$elm_bootstrap$Bootstrap_Card$block,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
-											_user$project$Main$showGameStartButton(model.mode)),
-										_1: {ctor: '[]'}
-									},
-									A3(
-										_rundis$elm_bootstrap$Bootstrap_Card$block,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
-												A2(
-													_rundis$elm_bootstrap$Bootstrap_Grid$row,
-													{ctor: '[]'},
-													{
-														ctor: '::',
-														_0: A2(
-															_rundis$elm_bootstrap$Bootstrap_Grid$col,
-															{ctor: '[]'},
-															{
-																ctor: '::',
-																_0: A2(
-																	_rundis$elm_bootstrap$Bootstrap_Button$button,
-																	{
-																		ctor: '::',
-																		_0: _rundis$elm_bootstrap$Bootstrap_Button$success,
-																		_1: {
-																			ctor: '::',
-																			_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
-																			_1: {
-																				ctor: '::',
-																				_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-																					!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Busy)),
-																				_1: {
-																					ctor: '::',
-																					_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$StartShot),
-																					_1: {ctor: '[]'}
-																				}
-																			}
-																		}
-																	},
-																	{
-																		ctor: '::',
-																		_0: _elm_lang$html$Html$text('Start shot'),
-																		_1: {ctor: '[]'}
-																	}),
-																_1: {ctor: '[]'}
-															}),
-														_1: {
-															ctor: '::',
-															_0: A2(
-																_rundis$elm_bootstrap$Bootstrap_Grid$col,
-																{ctor: '[]'},
-																{
-																	ctor: '::',
-																	_0: A2(
-																		_rundis$elm_bootstrap$Bootstrap_Button$button,
-																		{
-																			ctor: '::',
-																			_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-																			_1: {
-																				ctor: '::',
-																				_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
-																				_1: {
-																					ctor: '::',
-																					_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-																						!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Playing)),
-																					_1: {
-																						ctor: '::',
-																						_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$EndShot),
-																						_1: {ctor: '[]'}
-																					}
-																				}
-																			}
-																		},
-																		{
-																			ctor: '::',
-																			_0: _elm_lang$html$Html$text('Finish shot'),
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {ctor: '[]'}
-																}),
-															_1: {ctor: '[]'}
-														}
-													})),
-											_1: {ctor: '[]'}
-										},
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_Grid$col,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Card$view(
 										A3(
 											_rundis$elm_bootstrap$Bootstrap_Card$block,
 											{ctor: '[]'},
 											{
 												ctor: '::',
 												_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
-													_user$project$Main$showCounter(model)),
+													_user$project$Main$showGameStartButton(model.mode)),
 												_1: {ctor: '[]'}
 											},
 											A3(
-												_rundis$elm_bootstrap$Bootstrap_Card$headerH4,
+												_rundis$elm_bootstrap$Bootstrap_Card$block,
 												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html$text('Snooker Shootout Timer'),
+													_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
+														A2(
+															_rundis$elm_bootstrap$Bootstrap_Grid$row,
+															{ctor: '[]'},
+															{
+																ctor: '::',
+																_0: A2(
+																	_rundis$elm_bootstrap$Bootstrap_Grid$col,
+																	{ctor: '[]'},
+																	{
+																		ctor: '::',
+																		_0: A2(
+																			_rundis$elm_bootstrap$Bootstrap_Button$button,
+																			{
+																				ctor: '::',
+																				_0: _rundis$elm_bootstrap$Bootstrap_Button$success,
+																				_1: {
+																					ctor: '::',
+																					_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
+																					_1: {
+																						ctor: '::',
+																						_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+																							!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Busy)),
+																						_1: {
+																							ctor: '::',
+																							_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$StartShot),
+																							_1: {ctor: '[]'}
+																						}
+																					}
+																				}
+																			},
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text('Start shot'),
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_rundis$elm_bootstrap$Bootstrap_Grid$col,
+																		{ctor: '[]'},
+																		{
+																			ctor: '::',
+																			_0: A2(
+																				_rundis$elm_bootstrap$Bootstrap_Button$button,
+																				{
+																					ctor: '::',
+																					_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
+																					_1: {
+																						ctor: '::',
+																						_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
+																						_1: {
+																							ctor: '::',
+																							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+																								!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Playing)),
+																							_1: {
+																								ctor: '::',
+																								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$EndShot),
+																								_1: {ctor: '[]'}
+																							}
+																						}
+																					}
+																				},
+																				{
+																					ctor: '::',
+																					_0: _elm_lang$html$Html$text('Finish shot'),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {ctor: '[]'}
+																		}),
+																	_1: {ctor: '[]'}
+																}
+															})),
 													_1: {ctor: '[]'}
 												},
-												_rundis$elm_bootstrap$Bootstrap_Card$config(
+												A3(
+													_rundis$elm_bootstrap$Bootstrap_Card$block,
+													{ctor: '[]'},
 													{
 														ctor: '::',
-														_0: _rundis$elm_bootstrap$Bootstrap_Card$outlinePrimary,
+														_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
+															_user$project$Main$showCounter(model)),
 														_1: {ctor: '[]'}
-													})))))),
+													},
+													A3(
+														_rundis$elm_bootstrap$Bootstrap_Card$headerH4,
+														{ctor: '[]'},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Snooker Shootout Timer'),
+															_1: {ctor: '[]'}
+														},
+														_rundis$elm_bootstrap$Bootstrap_Card$config(
+															{
+																ctor: '::',
+																_0: _rundis$elm_bootstrap$Bootstrap_Card$outlinePrimary,
+																_1: {ctor: '[]'}
+															})))))),
+									_1: {ctor: '[]'}
+								}),
 							_1: {ctor: '[]'}
 						}),
 					_1: {ctor: '[]'}
 				}),
-			_1: {ctor: '[]'}
+			_1: {
+				ctor: '::',
+				_0: _user$project$Main$makeAudioObjects,
+				_1: {ctor: '[]'}
+			}
 		});
 };
 var _user$project$Main$Tick = function (a) {
