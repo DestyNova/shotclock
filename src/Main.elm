@@ -27,6 +27,7 @@ type alias Model =
     { gameTime : Int
     , turnTime : Int
     , mode : GameMode
+    , warnedAboutFastMode : Bool
     }
 
 
@@ -46,6 +47,7 @@ initModel =
     { gameTime = 6000
     , turnTime = 150
     , mode = Stopped
+    , warnedAboutFastMode = False
     }
 
 
@@ -138,8 +140,14 @@ update msg model =
                         100
                     else
                         150
+
+                (warnedAboutFastMode, audioCommands) =
+                    if not model.warnedAboutFastMode && turnTime == 100 then
+                        (True, [ playAudio "shotclock-10s.ogg" ])
+                    else
+                        (model.warnedAboutFastMode, [])
             in
-                { model | turnTime = turnTime, mode = Playing } ! []
+                { model | turnTime = turnTime, mode = Playing, warnedAboutFastMode = warnedAboutFastMode } ! audioCommands
 
         EndShot ->
             { model | mode = Busy } ! []
@@ -173,9 +181,13 @@ getCountdownAudio n =
                 []
 
 
+
 -- PORTS
 
+
 port playAudio : String -> Cmd msg
+
+
 
 -- SUBSCRIPTIONS
 
@@ -230,7 +242,7 @@ view model =
 
 makeAudioObjects =
     div [] <|
-        List.map (\url -> audio [id url] [ source [ src url ] [] ]) audioClips
+        List.map (\url -> audio [ id url ] [ source [ src url ] [] ]) audioClips
 
 
 showGameStartButton : GameMode -> Html Msg
