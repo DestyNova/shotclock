@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Time exposing (Time, second)
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
+import Bootstrap.Grid.Row as Row
 import Bootstrap.Card as Card
 import Bootstrap.Card.Block as Block
 import Bootstrap.Button as Button
@@ -141,11 +142,11 @@ update msg model =
                     else
                         150
 
-                (warnedAboutFastMode, audioCommands) =
+                ( warnedAboutFastMode, audioCommands ) =
                     if not model.warnedAboutFastMode && turnTime == 100 then
-                        (True, [ playAudio "shotclock-10s.ogg" ])
+                        ( True, [ playAudio "shotclock-10s.ogg" ] )
                     else
-                        (model.warnedAboutFastMode, [])
+                        ( model.warnedAboutFastMode, [] )
             in
                 { model | turnTime = turnTime, mode = Playing, warnedAboutFastMode = warnedAboutFastMode } ! audioCommands
 
@@ -206,12 +207,11 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [ style [ ( "padding-top", "2%" ) ] ]
         [ Grid.container []
             [ Grid.row []
                 [ Grid.col []
                     [ Card.config [ Card.outlinePrimary ]
-                        |> Card.headerH4 [] [ text "Snooker Shootout Timer" ]
                         |> Card.block []
                             [ Block.custom <| showCounter model
                             ]
@@ -226,6 +226,17 @@ view model =
                                         [ Button.button [ Button.danger, Button.block, Button.disabled (model.mode /= Playing), Button.onClick EndShot ]
                                             [ text "Finish shot" ]
                                         ]
+                                    ]
+                            ]
+                        |> Card.block []
+                            [ Block.custom <|
+                                Grid.row [ Row.middleMd ]
+                                    [ Grid.col []
+                                        [ img [ src "st-francis-hospice.png", style logoStyle ] [] ]
+                                    , Grid.col []
+                                        [ img [ src "snooker-shootout-cropped.jpg", style logoStyle ] [] ]
+                                    , Grid.col []
+                                        [ div [ style [ ( "text-align", "right" ) ] ] [ img [ src "joeys-snooker-club.jpg", style logoStyle ] [] ] ]
                                     ]
                             ]
                         |> Card.block []
@@ -277,10 +288,12 @@ showGameTimer model =
             else
                 "green"
     in
-        div []
-            [ text "GAME TIME: "
-            , span [ style [ ( "color", c ) ] ]
-                [ text <| formatGameTime n ]
+        div [style [("text-align", "center")]]
+            [ h4 [] [ text "GAME TIME" ]
+            , h4 []
+                [ span [ style [ ( "color", c ) ] ]
+                    [ text <| formatGameTime n ]
+                ]
             ]
 
 
@@ -296,10 +309,12 @@ showShotTimer model =
             else
                 "green"
     in
-        div []
-            [ text "SHOT TIME: "
-            , span [ style [ ( "color", c ) ] ]
-                [ text <| formatShotTime n ]
+        div [style [("text-align", "center")]]
+            [ h4 [] [ text "SHOT TIME" ]
+            , h4 []
+                [ span [ style [ ( "color", c ) ] ]
+                    [ text <| formatShotTime n ]
+                ]
             ]
 
 
@@ -311,3 +326,8 @@ formatGameTime n =
 formatShotTime : Int -> String
 formatShotTime n =
     (n // 10 |> toString) ++ "." ++ (n % 10 |> toString)
+
+
+logoStyle : List ( String, String )
+logoStyle =
+    [ ( "width", "95%" ), ( "max-height", "200px" ), ( "object-fit", "contain" ) ]
