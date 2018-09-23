@@ -12300,11 +12300,7 @@ var _user$project$Main$view = function (model) {
 													_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
 														A2(
 															_rundis$elm_bootstrap$Bootstrap_Grid$row,
-															{
-																ctor: '::',
-																_0: _rundis$elm_bootstrap$Bootstrap_Grid_Row$middleMd,
-																_1: {ctor: '[]'}
-															},
+															{ctor: '[]'},
 															{
 																ctor: '::',
 																_0: A2(
@@ -12313,17 +12309,30 @@ var _user$project$Main$view = function (model) {
 																	{
 																		ctor: '::',
 																		_0: A2(
-																			_elm_lang$html$Html$img,
+																			_rundis$elm_bootstrap$Bootstrap_Button$button,
 																			{
 																				ctor: '::',
-																				_0: _elm_lang$html$Html_Attributes$src('st-francis-hospice.png'),
+																				_0: _rundis$elm_bootstrap$Bootstrap_Button$success,
 																				_1: {
 																					ctor: '::',
-																					_0: _elm_lang$html$Html_Attributes$style(_user$project$Main$logoStyle),
-																					_1: {ctor: '[]'}
+																					_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
+																					_1: {
+																						ctor: '::',
+																						_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+																							!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Busy)),
+																						_1: {
+																							ctor: '::',
+																							_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$StartShot),
+																							_1: {ctor: '[]'}
+																						}
+																					}
 																				}
 																			},
-																			{ctor: '[]'}),
+																			{
+																				ctor: '::',
+																				_0: _elm_lang$html$Html$text('Start shot'),
+																				_1: {ctor: '[]'}
+																			}),
 																		_1: {ctor: '[]'}
 																	}),
 																_1: {
@@ -12334,58 +12343,33 @@ var _user$project$Main$view = function (model) {
 																		{
 																			ctor: '::',
 																			_0: A2(
-																				_elm_lang$html$Html$img,
+																				_rundis$elm_bootstrap$Bootstrap_Button$button,
 																				{
 																					ctor: '::',
-																					_0: _elm_lang$html$Html_Attributes$src('snooker-shootout-cropped.jpg'),
+																					_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
 																					_1: {
 																						ctor: '::',
-																						_0: _elm_lang$html$Html_Attributes$style(_user$project$Main$logoStyle),
-																						_1: {ctor: '[]'}
+																						_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
+																						_1: {
+																							ctor: '::',
+																							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
+																								!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Playing)),
+																							_1: {
+																								ctor: '::',
+																								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$EndShot),
+																								_1: {ctor: '[]'}
+																							}
+																						}
 																					}
 																				},
-																				{ctor: '[]'}),
+																				{
+																					ctor: '::',
+																					_0: _elm_lang$html$Html$text('Finish shot'),
+																					_1: {ctor: '[]'}
+																				}),
 																			_1: {ctor: '[]'}
 																		}),
-																	_1: {
-																		ctor: '::',
-																		_0: A2(
-																			_rundis$elm_bootstrap$Bootstrap_Grid$col,
-																			{ctor: '[]'},
-																			{
-																				ctor: '::',
-																				_0: A2(
-																					_elm_lang$html$Html$div,
-																					{
-																						ctor: '::',
-																						_0: _elm_lang$html$Html_Attributes$style(
-																							{
-																								ctor: '::',
-																								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'right'},
-																								_1: {ctor: '[]'}
-																							}),
-																						_1: {ctor: '[]'}
-																					},
-																					{
-																						ctor: '::',
-																						_0: A2(
-																							_elm_lang$html$Html$img,
-																							{
-																								ctor: '::',
-																								_0: _elm_lang$html$Html_Attributes$src('joeys-snooker-club.jpg'),
-																								_1: {
-																									ctor: '::',
-																									_0: _elm_lang$html$Html_Attributes$style(_user$project$Main$logoStyle),
-																									_1: {ctor: '[]'}
-																								}
-																							},
-																							{ctor: '[]'}),
-																						_1: {ctor: '[]'}
-																					}),
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	}
+																	_1: {ctor: '[]'}
 																}
 															})),
 													_1: {ctor: '[]'}
@@ -12396,97 +12380,15 @@ var _user$project$Main$view = function (model) {
 													{
 														ctor: '::',
 														_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
-															A2(
-																_rundis$elm_bootstrap$Bootstrap_Grid$row,
-																{ctor: '[]'},
-																{
-																	ctor: '::',
-																	_0: A2(
-																		_rundis$elm_bootstrap$Bootstrap_Grid$col,
-																		{ctor: '[]'},
-																		{
-																			ctor: '::',
-																			_0: A2(
-																				_rundis$elm_bootstrap$Bootstrap_Button$button,
-																				{
-																					ctor: '::',
-																					_0: _rundis$elm_bootstrap$Bootstrap_Button$success,
-																					_1: {
-																						ctor: '::',
-																						_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
-																						_1: {
-																							ctor: '::',
-																							_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-																								!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Busy)),
-																							_1: {
-																								ctor: '::',
-																								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$StartShot),
-																								_1: {ctor: '[]'}
-																							}
-																						}
-																					}
-																				},
-																				{
-																					ctor: '::',
-																					_0: _elm_lang$html$Html$text('Start shot'),
-																					_1: {ctor: '[]'}
-																				}),
-																			_1: {ctor: '[]'}
-																		}),
-																	_1: {
-																		ctor: '::',
-																		_0: A2(
-																			_rundis$elm_bootstrap$Bootstrap_Grid$col,
-																			{ctor: '[]'},
-																			{
-																				ctor: '::',
-																				_0: A2(
-																					_rundis$elm_bootstrap$Bootstrap_Button$button,
-																					{
-																						ctor: '::',
-																						_0: _rundis$elm_bootstrap$Bootstrap_Button$danger,
-																						_1: {
-																							ctor: '::',
-																							_0: _rundis$elm_bootstrap$Bootstrap_Button$block,
-																							_1: {
-																								ctor: '::',
-																								_0: _rundis$elm_bootstrap$Bootstrap_Button$disabled(
-																									!_elm_lang$core$Native_Utils.eq(model.mode, _user$project$Main$Playing)),
-																								_1: {
-																									ctor: '::',
-																									_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$EndShot),
-																									_1: {ctor: '[]'}
-																								}
-																							}
-																						}
-																					},
-																					{
-																						ctor: '::',
-																						_0: _elm_lang$html$Html$text('Finish shot'),
-																						_1: {ctor: '[]'}
-																					}),
-																				_1: {ctor: '[]'}
-																			}),
-																		_1: {ctor: '[]'}
-																	}
-																})),
+															_user$project$Main$showCounter(model)),
 														_1: {ctor: '[]'}
 													},
-													A3(
-														_rundis$elm_bootstrap$Bootstrap_Card$block,
-														{ctor: '[]'},
+													_rundis$elm_bootstrap$Bootstrap_Card$config(
 														{
 															ctor: '::',
-															_0: _rundis$elm_bootstrap$Bootstrap_Card_Block$custom(
-																_user$project$Main$showCounter(model)),
+															_0: _rundis$elm_bootstrap$Bootstrap_Card$outlinePrimary,
 															_1: {ctor: '[]'}
-														},
-														_rundis$elm_bootstrap$Bootstrap_Card$config(
-															{
-																ctor: '::',
-																_0: _rundis$elm_bootstrap$Bootstrap_Card$outlinePrimary,
-																_1: {ctor: '[]'}
-															})))))),
+														}))))),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
