@@ -230,17 +230,6 @@ view model =
                             ]
                         |> Card.block []
                             [ Block.custom <|
-                                Grid.row [ Row.middleMd ]
-                                    [ Grid.col []
-                                        [ img [ src "st-francis-hospice.png", style logoStyle ] [] ]
-                                    , Grid.col []
-                                        [ img [ src "snooker-shootout-cropped.jpg", style logoStyle ] [] ]
-                                    , Grid.col []
-                                        [ div [ style [ ( "text-align", "right" ) ] ] [ img [ src "joeys-snooker-club.jpg", style logoStyle ] [] ] ]
-                                    ]
-                            ]
-                        |> Card.block []
-                            [ Block.custom <|
                                 showGameStartButton model.mode
                             ]
                         |> Card.view
@@ -288,7 +277,7 @@ showGameTimer model =
             else
                 "green"
     in
-        div [style [("text-align", "center")]]
+        div [ style [ ( "text-align", "center" ) ] ]
             [ h4 [] [ text "GAME TIME" ]
             , h4 []
                 [ span [ style [ ( "color", c ) ] ]
@@ -309,7 +298,7 @@ showShotTimer model =
             else
                 "green"
     in
-        div [style [("text-align", "center")]]
+        div [ style [ ( "text-align", "center" ) ] ]
             [ h4 [] [ text "SHOT TIME" ]
             , h4 []
                 [ span [ style [ ( "color", c ) ] ]
